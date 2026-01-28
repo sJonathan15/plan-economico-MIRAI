@@ -1,0 +1,39 @@
+---
+
+---
+
+<button
+    id="back-button"
+    class="group flex items-center space-x-2 text-slate-500 hover:text-indigo-600 transition-all font-bold text-sm mb-6"
+>
+    <div
+        class="p-2 rounded-lg bg-[#FAFAFA] group-hover:bg-indigo-50 transition-colors"
+    >
+        <svg
+            class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M15 19l-7-7 7-7"></path>
+        </svg>
+    </div>
+    <span>Volver</span>
+</button>
+
+<script>
+    const backBtn = document.getElementById("back-button");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/";
+            }
+        });
+    }
+</script>

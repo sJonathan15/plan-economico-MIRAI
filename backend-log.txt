@@ -1,0 +1,11 @@
+﻿
+> economic-plan-platform@1.0.0 dev:backend
+> cd backend && npm run dev
+
+
+> economic-plan-backend@1.0.0 dev
+> npx tsx watch src/server.ts
+
+9:28:36 [tsx] change in ./src\server.ts Rerunning...
+c9:29:24 [tsx] change in ./src\server.ts Rerunning...
+c9:29:42 [tsx] change in ./src\server.ts Rerunning...

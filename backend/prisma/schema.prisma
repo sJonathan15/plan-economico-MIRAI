@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  name              String
+  email             String             @unique
+  password_hash     String
+  role              Role               @default(STUDENT)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  coverImage        String?
+  profileImage      String?
+  entrepreneurships Entrepreneurship[]
+  resetTokens       PasswordResetToken[]
+
+  @@map("usuarios_semillas")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
+
+model Entrepreneurship {
+  id                        Int               @id @default(autoincrement())
+  userId                    Int
+  name                      String
+  sector                    String
+  createdAt                 DateTime          @default(now())
+  updatedAt                 DateTime          @updatedAt
+  activitiesStartDate       DateTime?
+  addressCanton             String?
+  addressComplete           String?
+  addressParish             String?
+  addressProvince           String?
+  brand                     String?
+  email                     String?
+  hasRuc                    Boolean           @default(false)
+  rucNumber                 String?
+  imageUrl                  String?
+  logoUrl                   String?
+  mobile                    String?
+  phone                     String?
+  representativeAge         Int?
+  representativeBirthDate   DateTime?
+  representativeGender      String?
+  representativeId          String?
+  representativeName        String?
+  representativeNationality String?
+  user                      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plans                     Plan[]
+  team                      TeamMember[]
+  partners                  KeyPartner[]
+  segments                  CustomerSegment[]
+
+  @@map("entrepreneurships")
+}
+
+model KeyPartner {
+  id                 Int              @id @default(autoincrement())
+  entrepreneurshipId Int
+  name               String
+  type               String
+  role               String?
+  entrepreneurship   Entrepreneurship @relation(fields: [entrepreneurshipId], references: [id], onDelete: Cascade)
+
+  @@map("key_partners")
+}
+
+model TeamMember {
+  id                 Int              @id @default(autoincrement())
+  entrepreneurshipId Int
+  name               String
+  experience         String?
+  role               String
+  entrepreneurship   Entrepreneurship @relation(fields: [entrepreneurshipId], references: [id], onDelete: Cascade)
+
+  @@map("team_members")
+}
+
+model CustomerSegment {
+  id                 Int              @id @default(autoincrement())
+  entrepreneurshipId Int
+  name               String
+  percentage         Int?
+  ageRange           String?
+  socioeconomicLevel String?
+  characteristics    String?
+  entrepreneurship   Entrepreneurship @relation(fields: [entrepreneurshipId], references: [id], onDelete: Cascade)
+
+  @@map("customer_segments")
+}
+
+model Plan {
+  id                        Int              @id @default(autoincrement())
+  entrepreneurshipId        Int
+  totalCost                 Decimal          @db.Decimal(12, 2)
+  netProfit                 Decimal          @db.Decimal(12, 2)
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+  
+  // Section 1: Business Description
+  businessDescription       String?
+  mainActivity             String?
+  productiveFocus          String?
+  socialImpact             String?
+  
+  // Section 2: Value Proposition
+  valueProposition         String?
+  differentiation          String?
+  customerBenefits         String?
+  
+  // Section 4 & 5: Channels
+  communicationChannels    String?
+  commercializationChannels String?
+  
+  // Section 8: Supply Chain
+  supplyChainMode          String?          @default("GUIDED")
+  supplyChainProviders     String?
+  supplyChainProduction    String?
+  supplyChainStorage       String?
+  supplyChainDistribution  String?
+  supplyChainClient        String?
+  supplyChainImageUrl      String?
+
+  // Section 9: Rates
+  discountRate              Decimal?         @db.Decimal(5, 4)
+  growthRate                Decimal?         @db.Decimal(5, 4)
+  inflationRate             Decimal?         @db.Decimal(5, 4)
+  priceGrowthRate           Decimal?         @db.Decimal(5, 4)
+  salaryIncreaseRate        Decimal?         @db.Decimal(5, 4)
+  
+  benefitCostRatio          Decimal?         @db.Decimal(5, 2)
+  financialConclusion       String?
+  financialRecommendations  String?
+  financialRisks            String?
+  paybackPeriod             String?
+  tir                       Decimal?         @db.Decimal(5, 4)
+  van                       Decimal?         @db.Decimal(15, 2)
+  totalMonthlyUnitCost      Decimal?         @db.Decimal(12, 2)
+  totalAnnualUnitCost       Decimal?         @db.Decimal(12, 2)
+  
+  documents                 Document[]
+  demands                   PlanDemand[]
+  equipments                PlanEquipment[]
+  financingItems            PlanFinancing[]
+  projections               PlanProjection[]
+  provisions                PlanProvision[]
+  unitCosts                 PlanUnitCost[]
+  images                    PlanImage[]
+  entrepreneurship          Entrepreneurship @relation(fields: [entrepreneurshipId], references: [id], onDelete: Cascade)
+
+  @@map("plans")
+}
+
+model PlanImage {
+  id        Int      @id @default(autoincrement())
+  planId    Int
+  url       String
+  createdAt DateTime @default(now())
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_images")
+}
+
+model PlanDemand {
+  id            Int     @id @default(autoincrement())
+  planId        Int
+  productName   String
+  monthlyDemand Int
+  unitPrice     Decimal @db.Decimal(12, 2)
+  plan          Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_demands")
+}
+
+model PlanEquipment {
+  id              Int     @id @default(autoincrement())
+  planId          Int
+  description     String
+  quantity        Int
+  unitPrice       Decimal @db.Decimal(12, 2)
+  accountType     String
+  financingSource String
+  plan            Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_equipments")
+}
+
+model PlanUnitCost {
+  id              Int     @id @default(autoincrement())
+  planId          Int
+  wizardId        BigInt
+  productName     String
+  monthlyQuantity Int
+  unitCost        Decimal @db.Decimal(12, 2)
+  total           Decimal @db.Decimal(12, 2) @default(0)
+  plan            Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_unit_costs")
+}
+
+model PlanProvision {
+  id              Int     @id @default(autoincrement())
+  planId          Int
+  productId       BigInt
+  item            String
+  unit            String
+  monthlyQuantity Decimal @db.Decimal(12, 2)
+  unitPrice       Decimal @db.Decimal(12, 2)
+  plan            Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_provisions")
+}
+
+model PlanFinancing {
+  id      Int     @id @default(autoincrement())
+  planId  Int
+  concept String
+  amount  Decimal @db.Decimal(12, 2)
+  source  String
+  plan    Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_financing_items")
+}
+
+model PlanProjection {
+  id                 Int     @id @default(autoincrement())
+  planId             Int
+  year               Int
+  revenue            Decimal @db.Decimal(15, 2)
+  costs              Decimal @db.Decimal(15, 2)
+  expenses           Decimal @db.Decimal(15, 2)
+  ebit               Decimal @db.Decimal(15, 2)
+  tax                Decimal @db.Decimal(15, 2)
+  netProfit          Decimal @db.Decimal(15, 2)
+  cashFlow           Decimal @db.Decimal(15, 2)
+  cumulativeCashFlow Decimal @db.Decimal(15, 2)
+  plan               Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_projections")
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  planId    Int
+  filePath  String
+  createdAt DateTime @default(now())
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}

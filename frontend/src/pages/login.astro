@@ -1,0 +1,401 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import BackButton from "../components/BackButton.astro";
+import { InputField } from "../components/InputField";
+import StatusModal from "../components/StatusModal.astro";
+---
+
+<MainLayout title="Iniciar Sesión">
+    <Navbar />
+    <div
+        class="flex items-center justify-center min-h-[calc(100vh-80px)] pt-20"
+    >
+        <div
+            class="w-full max-w-md bg-white p-10 rounded-[24px] shadow-2xl relative overflow-hidden"
+        >
+            <BackButton />
+            <h2
+                class="text-3xl font-black text-slate-900 text-center mb-2 tracking-tight"
+            >
+                Bienvenido de nuevo
+            </h2>
+            <p
+                class="text-center text-slate-500 font-medium mb-10 leading-relaxed"
+            >
+                Ingresa a tu cuenta para continuar con tus planes.
+            </p>
+
+            <form id="login-form" class="space-y-5">
+                <InputField
+                    label="Correo Electrónico"
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="correo@institucion.edu"
+                />
+
+                <InputField
+                    client:load
+                    label="Contraseña"
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="••••••••"
+                />
+
+                <div class="flex items-center justify-between mt-2 mb-6">
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input
+                            type="checkbox"
+                            id="remember"
+                            class="checkbox-mirai"
+                            name="remember"
+                        />
+                        <span
+                            class="text-sm font-bold text-slate-600 group-hover:text-indigo-600 transition-colors"
+                            >Recordarme</span
+                        >
+                    </label>
+                    <button
+                        type="button"
+                        id="btn-forgot-password"
+                        class="text-sm font-bold text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline transition-all"
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </button>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-full py-4 text-lg shadow-xl shadow-indigo-500/10 hover:-translate-y-1 transition-all active:scale-95"
+                >
+                    Iniciar Sesión
+                </button>
+            </form>
+
+            <div class="mt-8 pt-8 border-t border-slate-100 text-center">
+                <p class="text-sm text-slate-600 font-medium">
+                    ¿No tienes cuenta? <a
+                        href="/register"
+                        class="text-indigo-600 font-bold hover:text-indigo-700 transition-colors"
+                        >Regístrate ahora</a
+                    >
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recovery Modal -->
+    <dialog id="recovery-modal" class="modal-mirai">
+        <div class="p-8">
+            <div id="recovery-step-1">
+                <div class="flex justify-between items-center mb-6">
+                    <h3
+                        class="text-2xl font-black text-slate-900 tracking-tight"
+                    >
+                        Recuperar contraseña
+                    </h3>
+                    <button
+                        type="button"
+                        class="btn-close-modal text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                        <svg
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2.5"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-slate-500 font-medium mb-8 leading-relaxed">
+                    Ingresa tu correo electrónico y te enviaremos las
+                    instrucciones para restablecer tu contraseña.
+                </p>
+
+                <form id="recovery-form" class="space-y-6">
+                    <InputField
+                        client:load
+                        label="Correo Electrónico"
+                        type="email"
+                        id="recovery-email"
+                        required
+                        placeholder="tu-correo@ejemplo.com"
+                    />
+
+                    <div class="flex flex-col gap-3 pt-2">
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-full py-4 shadow-xl shadow-indigo-500/10"
+                        >
+                            Enviar instrucciones
+                        </button>
+                        <button
+                            type="button"
+                            class="btn-close-modal btn btn-secondary w-full py-4 text-slate-500"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="recovery-step-2" class="hidden text-center">
+                <div
+                    class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6"
+                >
+                    <svg
+                        class="w-10 h-10"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        ></path>
+                    </svg>
+                </div>
+                <h3
+                    class="text-2xl font-black text-slate-900 mb-4 tracking-tight"
+                >
+                    Revisa tu correo
+                </h3>
+                <p
+                    class="text-slate-500 font-medium mb-10 leading-relaxed"
+                    id="recovery-success-message"
+                >
+                    Si el correo está registrado, recibirás un enlace para
+                    restablecer tu contraseña.
+                </p>
+                <button
+                    type="button"
+                    class="btn-close-modal btn btn-primary w-full py-4 shadow-xl shadow-indigo-500/10"
+                >
+                    Entendido
+                </button>
+            </div>
+
+            <div id="recovery-step-error" class="hidden text-center">
+                <div
+                    class="w-20 h-20 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6"
+                >
+                    <svg
+                        class="w-10 h-10"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2.5"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        ></path>
+                    </svg>
+                </div>
+                <h3
+                    class="text-2xl font-black text-slate-900 mb-4 tracking-tight"
+                >
+                    Error al enviar
+                </h3>
+                <p
+                    class="text-slate-500 font-medium mb-10 leading-relaxed"
+                    id="recovery-error-message"
+                >
+                    No fue posible enviar el correo. Intenta nuevamente.
+                </p>
+                <button
+                    type="button"
+                    id="btn-retry-recovery"
+                    class="btn btn-primary w-full py-4 shadow-xl shadow-indigo-200/50"
+                >
+                    Intentar de nuevo
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <StatusModal id="auth-status-modal" />
+</MainLayout>
+
+<script>
+    import { api } from "../lib/api";
+
+    const form = document.getElementById("login-form") as HTMLFormElement;
+    const modal = (window as any).AstroStatusModal["auth-status-modal"];
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submitBtn = form.querySelector(
+            'button[type="submit"]',
+        ) as HTMLButtonElement;
+        const originalText = submitBtn.innerText;
+
+        const formData = new FormData(form);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const rememberMe = formData.get("remember") === "on";
+
+        // Client-side validation
+        if (!email.trim()) {
+            modal.show({
+                title: "Campo Requerido",
+                message: "El correo electrónico es obligatorio.",
+                type: "warning",
+            });
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            modal.show({
+                title: "Formato Inválido",
+                message: "Ingresa un correo electrónico válido.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (!password) {
+            modal.show({
+                title: "Campo Requerido",
+                message: "La contraseña es obligatoria.",
+                type: "warning",
+            });
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Iniciando sesión...";
+
+            await api.login({ email, password }, rememberMe);
+            window.location.href = "/dashboard";
+        } catch (error: any) {
+            console.error("Login error:", error);
+
+            let title = "Error de Sesión";
+            let message =
+                error.error ||
+                "No fue posible iniciar sesión. Intenta nuevamente.";
+
+            // Specific backend messages
+            if (
+                error.error ===
+                "El correo electrónico no se encuentra registrado."
+            ) {
+                title = "Correo no registrado";
+            } else if (
+                error.error === "La contraseña ingresada es incorrecta."
+            ) {
+                title = "Contraseña Incorrecta";
+            } else if (error.code === "P1001" || error.code === "P1000") {
+                title = "Servidor No Disponible";
+                message =
+                    "La base de datos no está disponible, intenta más tarde";
+            }
+
+            modal.show({
+                title,
+                message,
+                type: "error",
+            });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
+    });
+
+    // Recovery Modal Logic
+    const recoveryModal = document.getElementById(
+        "recovery-modal",
+    ) as HTMLDialogElement;
+    const btnForgot = document.getElementById("btn-forgot-password");
+    const recoveryForm = document.getElementById("recovery-form");
+    const step1 = document.getElementById("recovery-step-1");
+    const step2 = document.getElementById("recovery-step-2");
+    const stepError = document.getElementById("recovery-step-error");
+    const closeBtns = document.querySelectorAll(".btn-close-modal");
+    const btnRetry = document.getElementById("btn-retry-recovery");
+
+    btnForgot?.addEventListener("click", () => {
+        showRecoveryStep(1);
+        recoveryModal.showModal();
+    });
+
+    closeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => recoveryModal.close());
+    });
+
+    btnRetry?.addEventListener("click", () => {
+        showRecoveryStep(1);
+    });
+
+    function showRecoveryStep(step: number) {
+        step1?.classList.add("hidden");
+        step2?.classList.add("hidden");
+        stepError?.classList.add("hidden");
+
+        if (step === 1) step1?.classList.remove("hidden");
+        if (step === 2) step2?.classList.remove("hidden");
+        if (step === 3) stepError?.classList.remove("hidden");
+    }
+
+    recoveryForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById(
+            "recovery-email",
+        ) as HTMLInputElement;
+        const recoveryEmail = emailInput.value;
+        const btn = recoveryForm.querySelector(
+            'button[type="submit"]',
+        ) as HTMLButtonElement;
+
+        if (!recoveryEmail.trim()) {
+            modal.show({
+                title: "Dato Requerido",
+                message: "Por favor ingresa tu correo electrónico.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML =
+                '<span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+        }
+
+        try {
+            await api.forgotPassword(recoveryEmail);
+            showRecoveryStep(2);
+        } catch (error: any) {
+            console.error("Recovery error:", error);
+            const errorMsg = document.getElementById("recovery-error-message");
+            if (errorMsg) {
+                errorMsg.innerText =
+                    error.error ||
+                    error.message ||
+                    "No fue posible enviar el correo. Intenta nuevamente.";
+            }
+            showRecoveryStep(3);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "Enviar instrucciones";
+            }
+        }
+    });
+</script>

@@ -1,0 +1,295 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    @apply bg-[#E6EBF2] text-slate-900 overflow-x-hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes bounce-slow {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes mesh-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  25% {
+    background-position: 50% 100%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  75% {
+    background-position: 50% 0%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+.bg-mesh {
+  background: linear-gradient(-45deg, #0f172a, #4f46e5, #1e1b4b, #2563eb);
+  background-size: 300% 300%;
+  animation: mesh-gradient 12s ease infinite;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bg-mesh:hover {
+  background-size: 200% 200%;
+  animation-duration: 4s;
+  background-image: linear-gradient(-45deg, #1e1b4b, #6366f1, #312e81, #3b82f6);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full border-2 border-transparent bg-clip-padding hover:bg-slate-300;
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-2.5 rounded-xl font-bold transition-all duration-200 flex items-center justify-center space-x-2 active:scale-95;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm rounded-lg;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  }
+
+  .btn-secondary {
+    @apply bg-white text-slate-700 hover:bg-[#FAFAFA] transition-colors shadow-sm;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+  }
+
+  .btn-ghost {
+    @apply text-slate-500 hover:bg-[#FAFAFA] hover:text-slate-700;
+  }
+
+  .card {
+    @apply bg-white rounded-[24px] p-8 transition-all duration-300;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.08),
+      0 24px 60px rgba(15, 23, 42, 0.18);
+  }
+
+  .card-featured {
+    @apply card;
+    border-left: 6px solid #4F46E5 !important;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.1),
+      0 32px 72px rgba(15, 23, 42, 0.22);
+  }
+
+  .input {
+    @apply w-full px-4 h-14 rounded-xl bg-white border outline-none transition-all appearance-none text-slate-900 font-medium;
+    border-color: #CBD5E1;
+  }
+
+  /* Reset background for non-select inputs */
+  input.input:not([type="date"]),
+  textarea.input {
+    background-image: none;
+  }
+
+  .input:hover {
+    border-color: #94A3B8;
+  }
+
+  .input:focus {
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  }
+
+  /* Native Icon Visibility */
+  input[type="date"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+  }
+
+  input[type="date"]:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  /* Date picker icon customization */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(40%);
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  /* Number input spin buttons visibility */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+
+  /* Select arrow customization */
+  select.input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+  }
+
+  select.input:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  /* Calendar icon styling */
+  .input[type="date"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+  }
+
+  /* Hide native indicators to use our custom ones consistently */
+  .input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .textarea {
+    @apply input min-h-[100px] py-3 resize-none;
+  }
+
+  .input-sm {
+    @apply input h-10 px-3 text-sm rounded-lg;
+  }
+
+  .label {
+    @apply block text-sm font-bold text-slate-700 tracking-tight mb-1.5;
+  }
+
+  .checkbox-mirai {
+    @apply w-5 h-5 rounded border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500/30 transition-all cursor-pointer;
+  }
+
+  /* Recovery Modal specific styles (native dialog) */
+  dialog::backdrop {
+    @apply bg-slate-900/60 backdrop-blur-sm;
+  }
+
+  dialog.modal-mirai {
+    @apply border-none p-0 rounded-[2.5rem] bg-white shadow-2xl transition-all duration-300;
+    max-width: 450px;
+    width: 90%;
+  }
+
+  dialog.modal-mirai[open] {
+    animation: modal-reveal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes modal-reveal {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+}
+
+@layer utilities {
+
+  /* Sidebar States */
+  #sidebar {
+    width: 225px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-collapsed #sidebar {
+    width: 87px;
+  }
+
+  /* When collapsed, hide text */
+  .sidebar-collapsed .sidebar-text {
+    @apply opacity-0 pointer-events-none hidden;
+  }
+
+  /* Rotation of toggle arrow */
+  .sidebar-collapsed #sidebar-toggle svg {
+    @apply rotate-180;
+  }
+
+  /* Navbar Scroll States */
+  #main-navbar.is-scrolled {
+    @apply bg-white/80 backdrop-blur-xl shadow-xl shadow-indigo-900/5 border-indigo-100/30;
+  }
+
+  #main-navbar.is-scrolled #navbar-height {
+    @apply h-16;
+  }
+
+  /* Nav Link Underline Effect */
+  .nav-link {
+    @apply relative py-1 transition-colors duration-300;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 origin-right scale-x-0 transition-transform duration-300 ease-out;
+  }
+
+  .nav-link:hover::after {
+    @apply origin-left scale-x-100;
+  }
+
+  .nav-link.active::after {
+    @apply scale-x-100 origin-left;
+  }
+}

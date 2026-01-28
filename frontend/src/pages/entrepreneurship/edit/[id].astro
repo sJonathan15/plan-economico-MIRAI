@@ -1,0 +1,48 @@
+---
+import DashboardLayout from "../../../layouts/DashboardLayout.astro";
+import BackButton from "../../../components/BackButton.astro";
+---
+
+<DashboardLayout
+    title="Editar Emprendimiento"
+    subtitle="Modifica los datos generales, ubicación o contacto de tu proyecto"
+>
+    <div
+        id="wizard-container"
+        class="h-full bg-[#FAFAFA] p-4 overflow-y-auto custom-scrollbar"
+    >
+        <BackButton href="/entrepreneurship" />
+        <p class="text-center pt-20 text-slate-500">
+            Cargando datos del emprendimiento...
+        </p>
+    </div>
+</DashboardLayout>
+
+<script>
+    import React from "react";
+    import { createRoot } from "react-dom/client";
+    import { EntrepreneurshipWizard } from "../../../components/EntrepreneurshipWizard";
+    import { api } from "../../../lib/api";
+
+    const container = document.getElementById("wizard-container");
+    const id = window.location.pathname.split("/").pop();
+
+    async function init() {
+        if (!container || !id) return;
+        try {
+            const data = await api.getEntrepreneurship(parseInt(id));
+            if (!data) throw new Error("Not found");
+
+            const root = createRoot(container);
+            root.render(
+                React.createElement(EntrepreneurshipWizard, {
+                    initialData: data,
+                    isEditing: true,
+                }),
+            );
+        } catch (e) {
+            container.innerHTML = `<p class="text-red-500 text-center pt-20">Error al cargar datos del emprendimiento ${id}</p>`;
+        }
+    }
+    init();
+</script>

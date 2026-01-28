@@ -1,0 +1,105 @@
+---
+import Sidebar from "../components/Sidebar.astro";
+import "../styles/global.css";
+
+interface Props {
+    title: string;
+    subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/images/Logo_MIRAI_blanco_sinf.png"
+        />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title} | MIRAI</title>
+        <script is:inline>
+            // Apply sidebar state and check authentication as early as possible
+            (function () {
+                const token =
+                    localStorage.getItem("token") ||
+                    sessionStorage.getItem("token");
+                const path = window.location.pathname;
+                const isPublic = ["/", "/login", "/register"].includes(path);
+
+                if (!token && !isPublic) {
+                    window.location.href = "/login";
+                } else if (token && isPublic) {
+                    window.location.href = "/dashboard";
+                }
+
+                const collapsed =
+                    localStorage.getItem("sidebar-collapsed") === "true";
+                if (collapsed) {
+                    document.documentElement.classList.add("sidebar-collapsed");
+                }
+            })();
+        </script>
+    </head>
+    <body class="bg-[#E6EBF2] h-screen overflow-hidden flex">
+        <!-- Sidebar (Fixed Width, Full Height) -->
+        <Sidebar />
+
+        <!-- App Wrapper (Vertical Flex) -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden bg-[#E6EBF2]">
+            <!-- Top Header (Static Height) -->
+            <header
+                class="bg-white pt-8 px-8 pb-4 flex justify-between items-end flex-shrink-0"
+            >
+                <div>
+                    <h1
+                        class="text-3xl font-extrabold text-slate-900 tracking-tight"
+                    >
+                        {title}
+                    </h1>
+                    {
+                        subtitle && (
+                            <p class="text-slate-500 mt-1 font-medium">
+                                {subtitle}
+                            </p>
+                        )
+                    }
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main
+                class="flex-1 overflow-y-auto p-8 pt-6 bg-[#E6EBF2] custom-scrollbar"
+            >
+                <div class="max-w-7xl mx-auto">
+                    <slot />
+                </div>
+            </main>
+        </div>
+    </body>
+</html>
+
+<style is:global>
+    /* Define unified palette here to ensure it overrides defaults */
+    :root {
+        --primary-50: #f0f9ff;
+        --primary-100: #e0f2fe;
+        --primary-200: #bae6fd;
+        --primary-300: #7dd3fc;
+        --primary-400: #38bdf8;
+        --primary-500: #0ea5e9;
+        --primary-600: #0284c7; /* Indigo-ish Blue */
+        --primary-700: #0369a1;
+        --primary-800: #075985;
+        --primary-900: #0c4a6e;
+
+        --slate-50: #f8fafc;
+        --slate-100: #f1f5f9;
+        --slate-800: #1e293b;
+        --slate-900: #0f172a;
+    }
+</style>

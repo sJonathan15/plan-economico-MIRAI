@@ -1,0 +1,806 @@
+---
+import DashboardLayout from "../layouts/DashboardLayout.astro";
+import { EntrepreneurshipModalManager } from "../components/EntrepreneurshipModalManager";
+import BackButton from "../components/BackButton.astro";
+import { InputField } from "../components/InputField";
+
+// Server-side guard
+const userStr = Astro.cookies.get("token")?.value;
+// Note: real validation happens in client or middleware, here we just check presence
+---
+
+<DashboardLayout title="Mi Perfil">
+    <EntrepreneurshipModalManager client:load />
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <BackButton href="/dashboard" />
+        <!-- Profile Header (Cover & Avatar) -->
+        <div class="relative mb-20">
+            <!-- Cover Image -->
+            <div
+                class="h-48 md:h-64 bg-slate-200 rounded-[20px] overflow-hidden relative group cursor-pointer"
+                id="cover-container"
+            >
+                <img
+                    id="cover-img"
+                    src=""
+                    class="w-full h-full object-cover hidden"
+                    alt="Cover"
+                />
+                <div
+                    class="absolute inset-0 bg-black/0 group-hover:bg-black/20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                >
+                    <span
+                        class="text-white text-sm font-medium flex items-center bg-black/40 px-3 py-1.5 rounded-lg backdrop-blur-sm"
+                    >
+                        <svg
+                            class="w-4 h-4 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                            ></path><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                            ></path></svg
+                        >
+                        Cambiar Portada
+                    </span>
+                </div>
+                <input
+                    type="file"
+                    id="cover-input"
+                    class="hidden"
+                    accept="image/*"
+                />
+            </div>
+
+            <!-- Profile Image -->
+            <div class="absolute -bottom-16 left-8">
+                <div
+                    class="relative group cursor-pointer"
+                    id="avatar-container"
+                >
+                    <div
+                        class="w-32 h-32 md:w-40 md:h-40 rounded-[20px] border-4 border-white bg-slate-100 overflow-hidden shadow-lg"
+                    >
+                        <img
+                            id="avatar-img"
+                            src="https://ui-avatars.com/api/?name=User&background=random"
+                            class="w-full h-full object-cover"
+                            alt="Avatar"
+                        />
+                    </div>
+                    <div
+                        class="absolute inset-0 rounded-[20px] bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                    >
+                        <span
+                            class="text-white bg-black/40 p-2 rounded-full backdrop-blur-sm"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                ></path><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                ></path></svg
+                            >
+                        </span>
+                    </div>
+                    <input
+                        type="file"
+                        id="avatar-input"
+                        class="hidden"
+                        accept="image/*"
+                    />
+                </div>
+            </div>
+
+            <div class="absolute -bottom-12 left-44 md:left-56">
+                <h1
+                    id="header-name"
+                    class="text-2xl font-bold text-slate-900 leading-none"
+                >
+                    Cargando...
+                </h1>
+                <p id="header-email" class="text-slate-500 text-sm mt-1"></p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- User Info Section -->
+            <div class="lg:col-span-1">
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-6">Información Personal</h2>
+                    <form id="profile-form" class="space-y-4">
+                        <InputField
+                            label="Nombre Completo"
+                            type="text"
+                            id="name"
+                            name="name"
+                            required
+                        />
+                        <InputField
+                            label="Correo Electrónico"
+                            type="email"
+                            id="email"
+                            name="email"
+                            disabled
+                            className="bg-[#FAFAFA] text-slate-400 font-semibold"
+                        />
+                        <p class="text-xs text-slate-400 -mt-4 mb-4">
+                            El correo no se puede cambiar.
+                        </p>
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-full mt-4"
+                        >
+                            Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Password Change Section -->
+                <div class="card mt-8">
+                    <h2 class="text-xl font-bold mb-6">Cambiar Contraseña</h2>
+                    <form id="password-form" class="space-y-4">
+                        <InputField
+                            client:load
+                            label="Contraseña Actual"
+                            type="password"
+                            id="currentPassword"
+                            name="currentPassword"
+                            required
+                        />
+                        <InputField
+                            client:load
+                            label="Nueva Contraseña"
+                            type="password"
+                            id="newPassword"
+                            name="newPassword"
+                            required
+                        />
+                        <InputField
+                            client:load
+                            label="Confirmar Nueva Contraseña"
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            required
+                        />
+                        <button
+                            type="submit"
+                            class="btn btn-secondary w-full mt-4"
+                        >
+                            Actualizar Contraseña
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Entrepreneurships Section -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold">Mis Emprendimientos</h2>
+                        <button
+                            id="btn-new-entrepreneurship"
+                            class="btn btn-secondary text-sm px-4 py-2"
+                        >
+                            + Nuevo
+                        </button>
+                    </div>
+
+                    <div id="entrepreneurships-list" class="space-y-4">
+                        <!-- Loaded dynamically -->
+                        <div class="animate-pulse space-y-4">
+                            <div
+                                class="h-24 bg-[#FAFAFA] rounded-xl border border-slate-100"
+                            >
+                            </div>
+                            <div
+                                class="h-24 bg-[#FAFAFA] rounded-xl border border-slate-100"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Confirmation Modal -->
+    <dialog id="security_confirm_modal" class="modal">
+        <div
+            class="modal-box bg-white p-0 rounded-[20px] max-w-md w-full overflow-hidden shadow-2xl border border-slate-100"
+        >
+            <div
+                class="p-6 border-b flex justify-between items-center"
+                class="p-6 border-b flex justify-between items-center bg-slate-50/50"
+            >
+                <h3 class="text-xl font-black text-slate-900">
+                    Confirmar Acción
+                </h3>
+                <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-circle"
+                    id="btn-close-security-modal">✕</button
+                >
+            </div>
+
+            <div class="p-8">
+                <div
+                    class="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-6"
+                >
+                    <svg
+                        class="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        ></path>
+                    </svg>
+                </div>
+
+                <p class="text-slate-500 font-medium mb-6 leading-relaxed">
+                    Para continuar, por favor ingresa tu contraseña de inicio de
+                    sesión. Esta acción no se puede deshacer.
+                </p>
+
+                <form id="security-confirm-form" class="space-y-4">
+                    <input type="hidden" id="security-action-type" />
+                    <input type="hidden" id="security-target-id" />
+
+                    <div>
+                        <label
+                            class="block text-sm font-bold text-slate-700 mb-2"
+                            >Tu Contraseña</label
+                        >
+                        <div class="relative group/input">
+                            <input
+                                type="password"
+                                id="security-password"
+                                class="input w-full"
+                                placeholder="••••••••"
+                                required
+                            />
+                            <button
+                                type="button"
+                                id="toggle-security-password"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
+                            >
+                                <svg
+                                    class="w-5 h-5 toggle-icon-show"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    ></path>
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    ></path>
+                                </svg>
+                                <svg
+                                    class="w-5 h-5 toggle-icon-hide hidden"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
+                                    ></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p
+                            id="security-error"
+                            class="mt-2 text-sm font-bold text-red-600 hidden flex items-center gap-1"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Contraseña incorrecta
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-3 pt-2">
+                        <button
+                            type="submit"
+                            id="security-submit-btn"
+                            class="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black rounded-xl shadow-lg shadow-red-200 transition-all flex items-center justify-center gap-2 active:scale-95"
+                        >
+                            <span>Confirmar y Eliminar</span>
+                        </button>
+                        <button
+                            type="button"
+                            id="security-cancel-btn"
+                            class="w-full h-14 text-slate-500 font-bold hover:bg-[#FAFAFA] rounded-xl transition-all"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </div>
+    </dialog>
+
+    <script>
+        import { api } from "../lib/api";
+
+        // --- User Profile Logic ---
+        async function loadProfile() {
+            try {
+                const user = await api.getProfile();
+                console.log("Profile loaded:", user);
+
+                // Header Info
+                const headerName = document.getElementById("header-name");
+                const headerEmail = document.getElementById("header-email");
+                if (headerName) headerName.innerText = user.name;
+                if (headerEmail) headerEmail.innerText = user.email;
+
+                // Images
+                const baseUrl = "http://localhost:3000";
+                const avatarImg = document.getElementById(
+                    "avatar-img",
+                ) as HTMLImageElement;
+                const coverImg = document.getElementById(
+                    "cover-img",
+                ) as HTMLImageElement;
+
+                // Cache busting
+                const ts = Date.now();
+
+                if (user.profileImage) {
+                    avatarImg.src = `${baseUrl}${user.profileImage}?t=${ts}`;
+                } else {
+                    avatarImg.src = `https://ui-avatars.com/api/?name=${user.name}&background=random`;
+                }
+
+                if (user.coverImage) {
+                    coverImg.src = `${baseUrl}${user.coverImage}?t=${ts}`;
+                    coverImg.classList.remove("hidden");
+                }
+
+                // Sync storage (handled by updateProfile, but here we update the whole object)
+                const rememberMe = !!localStorage.getItem("token");
+                const storage = rememberMe ? localStorage : sessionStorage;
+                storage.setItem("user", JSON.stringify(user));
+
+                // Notify sidebar
+                window.dispatchEvent(new CustomEvent("user-updated"));
+
+                // Form inputs
+                (document.getElementById("name") as HTMLInputElement).value =
+                    user.name;
+                (document.getElementById("email") as HTMLInputElement).value =
+                    user.email;
+
+                loadEntrepreneurships(user.entrepreneurships);
+            } catch (error) {
+                console.error("Error loading profile:", error);
+            }
+        }
+
+        const profileForm = document.getElementById("profile-form");
+        profileForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = profileForm.querySelector(
+                "button[type=submit]",
+            ) as HTMLButtonElement;
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "Guardando...";
+
+            try {
+                const formData = new FormData(profileForm as HTMLFormElement);
+                await api.updateProfile({
+                    name: formData.get("name") as string,
+                });
+
+                // Update storage user name
+                const rememberMe = !!localStorage.getItem("token");
+                const storage = rememberMe ? localStorage : sessionStorage;
+                const localUser = api.getUser() || {};
+
+                storage.setItem(
+                    "user",
+                    JSON.stringify({
+                        ...localUser,
+                        name: formData.get("name"),
+                    }),
+                );
+
+                alert("Perfil actualizado correctamente");
+            } catch (error) {
+                console.error(error);
+                alert("Error al actualizar perfil");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+
+        const passwordForm = document.getElementById(
+            "password-form",
+        ) as HTMLFormElement;
+        passwordForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = passwordForm.querySelector(
+                "button[type=submit]",
+            ) as HTMLButtonElement;
+            const originalText = btn.innerText;
+
+            const currentPassword = (
+                document.getElementById("currentPassword") as HTMLInputElement
+            ).value;
+            const newPassword = (
+                document.getElementById("newPassword") as HTMLInputElement
+            ).value;
+            const confirmPassword = (
+                document.getElementById("confirmPassword") as HTMLInputElement
+            ).value;
+
+            if (newPassword !== confirmPassword) {
+                alert("Las nuevas contraseñas no coinciden");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Actualizando...";
+
+            try {
+                await api.changePassword({ currentPassword, newPassword });
+                alert("Contraseña actualizada correctamente");
+                passwordForm.reset();
+            } catch (error: any) {
+                console.error(error);
+                alert(error.message || "Error al actualizar la contraseña");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+
+        // --- Entrepreneurship Logic ---
+        function loadEntrepreneurships(list: any[]) {
+            const container = document.getElementById("entrepreneurships-list");
+            if (!container) return;
+
+            if (!list || list.length === 0) {
+                container.innerHTML =
+                    '<p class="text-slate-500 text-center py-4">No tienes emprendimientos registrados.</p>';
+                return;
+            }
+
+            container.innerHTML = list
+                .map((ent: any) => {
+                    const rawLogo =
+                        ent.logoUrl || ent.imageUrl || ent.logo || ent.image;
+                    const baseUrl = "http://localhost:3000";
+
+                    let finalLogoUrl = null;
+                    if (
+                        rawLogo &&
+                        typeof rawLogo === "string" &&
+                        rawLogo.trim() !== ""
+                    ) {
+                        finalLogoUrl = rawLogo.startsWith("http")
+                            ? rawLogo
+                            : `${baseUrl}${rawLogo.startsWith("/") ? "" : "/"}${rawLogo}`;
+                    }
+
+                    const imgHtml = finalLogoUrl
+                        ? `<img src="${finalLogoUrl}" class="w-12 h-12 rounded-lg object-cover mr-4" />`
+                        : `<div class="w-12 h-12 rounded-lg bg-[#FAFAFA] flex items-center justify-center mr-4 shadow-sm border border-slate-100"><svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`;
+
+                    return `
+                    <div class="card h-full flex flex-col hover:border-indigo-600 transition-all hover:scale-[1.02] hover:shadow-xl" >
+                    <div class="flex items-center flex-1">
+                            ${imgHtml}
+                            <div>
+                                <h3 class="font-bold text-slate-800">${ent.name}</h3>
+                                <p class="text-sm text-slate-500">${ent.sector}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mt-4 md:mt-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button 
+                                class="btn-edit-ent btn btn-secondary btn-sm p-2"
+                                data-id="${ent.id}"
+                                title="Editar Emprendimiento"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button 
+                                class="btn-image-ent btn btn-outline btn-sm p-2"
+                                data-id="${ent.id}"
+                                title="Cambiar Imagen"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </button>
+                            <button 
+                                class="btn-delete-ent btn btn-danger btn-sm bg-red-50 text-red-600 border-red-100 hover:bg-red-600 hover:text-white"
+                                data-id="${ent.id}"
+                                data-name="${ent.name}"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                })
+                .join("");
+
+            // Attach event listeners
+
+            document.querySelectorAll(".btn-delete-ent").forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const id = target.dataset.id;
+                    openSecurityModal("delete-entrepreneurship", id!);
+                });
+            });
+
+            document.querySelectorAll(".btn-edit-ent").forEach((btn) => {
+                btn.addEventListener("click", async (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const id = target.dataset.id;
+                    try {
+                        const ent = await api.getEntrepreneurship(
+                            parseInt(id!),
+                        );
+                        window.dispatchEvent(
+                            new CustomEvent("open-entrepreneurship-wizard", {
+                                detail: { mode: "edit", data: ent },
+                            }),
+                        );
+                    } catch (err) {
+                        alert("Error al cargar datos del emprendimiento");
+                    }
+                });
+            });
+
+            document.querySelectorAll(".btn-image-ent").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const id = (e.currentTarget as HTMLElement).dataset.id;
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.accept = "image/*";
+                    input.onchange = async (event: any) => {
+                        const file = event.target.files[0];
+                        if (file) {
+                            try {
+                                await api.uploadImage(
+                                    `/entrepreneurships/${id}/image`,
+                                    file,
+                                );
+                                const user = await api.getProfile();
+                                loadEntrepreneurships(user.entrepreneurships);
+                            } catch (error) {
+                                alert("Error al subir imagen");
+                            }
+                        }
+                    };
+                    input.click();
+                });
+            });
+        }
+
+        // Security Modal Logic
+        const securityModal = document.getElementById(
+            "security_confirm_modal",
+        ) as HTMLDialogElement;
+        const securityForm = document.getElementById(
+            "security-confirm-form",
+        ) as HTMLFormElement;
+        const securityPasswordInput = document.getElementById(
+            "security-password",
+        ) as HTMLInputElement;
+        const securityError = document.getElementById("security-error");
+        const securitySubmitBtn = document.getElementById(
+            "security-submit-btn",
+        );
+
+        function openSecurityModal(action: string, targetId: string) {
+            (
+                document.getElementById(
+                    "security-action-type",
+                ) as HTMLInputElement
+            ).value = action;
+            (
+                document.getElementById(
+                    "security-target-id",
+                ) as HTMLInputElement
+            ).value = targetId;
+            securityPasswordInput.value = "";
+            securityError?.classList.add("hidden");
+            securityModal.showModal();
+        }
+
+        securityForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const action = (
+                document.getElementById(
+                    "security-action-type",
+                ) as HTMLInputElement
+            ).value;
+            const targetId = (
+                document.getElementById(
+                    "security-target-id",
+                ) as HTMLInputElement
+            ).value;
+            const password = securityPasswordInput.value;
+
+            if (securitySubmitBtn) {
+                securitySubmitBtn.innerHTML =
+                    '<span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+                (securitySubmitBtn as HTMLButtonElement).disabled = true;
+            }
+
+            try {
+                await api.verifyPassword(password);
+
+                if (action === "delete-entrepreneurship") {
+                    await api.deleteEntrepreneurship(parseInt(targetId));
+                    const user = await api.getProfile();
+                    loadEntrepreneurships(user.entrepreneurships);
+                }
+
+                securityModal.close();
+            } catch (error: any) {
+                console.error(error);
+                securityError?.classList.remove("hidden");
+            } finally {
+                if (securitySubmitBtn) {
+                    securitySubmitBtn.innerHTML =
+                        "<span>Confirmar y Eliminar</span>";
+                    (securitySubmitBtn as HTMLButtonElement).disabled = false;
+                }
+            }
+        });
+
+        document
+            .getElementById("security-cancel-btn")
+            ?.addEventListener("click", () => securityModal.close());
+        document
+            .getElementById("btn-close-security-modal")
+            ?.addEventListener("click", () => securityModal.close());
+
+        // Password Toggle Logic for Security Modal
+        const secToggleBtn = document.getElementById(
+            "toggle-security-password",
+        );
+        const secShowIcon = secToggleBtn?.querySelector(".toggle-icon-show");
+        const secHideIcon = secToggleBtn?.querySelector(".toggle-icon-hide");
+
+        secToggleBtn?.addEventListener("click", () => {
+            const type =
+                securityPasswordInput.getAttribute("type") === "password"
+                    ? "text"
+                    : "password";
+            securityPasswordInput.setAttribute("type", type);
+
+            if (type === "text") {
+                secShowIcon?.classList.add("hidden");
+                secHideIcon?.classList.remove("hidden");
+            } else {
+                secShowIcon?.classList.remove("hidden");
+                secHideIcon?.classList.add("hidden");
+            }
+        });
+
+        // Entrepreneurship Modal Event Listeners
+        const btnNew = document.getElementById("btn-new-entrepreneurship");
+        btnNew?.addEventListener("click", () => {
+            window.dispatchEvent(
+                new CustomEvent("open-entrepreneurship-wizard", {
+                    detail: { mode: "create" },
+                }),
+            );
+        });
+
+        window.addEventListener("entrepreneurship-success", async () => {
+            const user = await api.getProfile();
+            loadEntrepreneurships(user.entrepreneurships);
+        });
+
+        // --- Image Upload Handlers ---
+        const avatarContainer = document.getElementById("avatar-container");
+        const avatarInput = document.getElementById(
+            "avatar-input",
+        ) as HTMLInputElement;
+        const coverContainer = document.getElementById("cover-container");
+        const coverInput = document.getElementById(
+            "cover-input",
+        ) as HTMLInputElement;
+
+        avatarContainer?.addEventListener("click", () => avatarInput.click());
+        coverContainer?.addEventListener("click", () => coverInput.click());
+
+        avatarInput?.addEventListener("change", async (e: any) => {
+            const file = e.target.files[0];
+            if (file) {
+                console.log("Uploading avatar...", file.name);
+                try {
+                    const res = await api.uploadImage(
+                        "/users/me/images",
+                        file,
+                        {
+                            type: "profile",
+                        },
+                    );
+                    console.log("Avatar upload success:", res);
+                    loadProfile();
+                } catch (error) {
+                    console.error("Avatar upload failed:", error);
+                    alert("Error al subir avatar");
+                }
+            }
+        });
+
+        coverInput?.addEventListener("change", async (e: any) => {
+            const file = e.target.files[0];
+            if (file) {
+                console.log("Uploading cover...", file.name);
+                try {
+                    const res = await api.uploadImage(
+                        "/users/me/images",
+                        file,
+                        {
+                            type: "cover",
+                        },
+                    );
+                    console.log("Cover upload success:", res);
+                    loadProfile();
+                } catch (error) {
+                    console.error("Cover upload failed:", error);
+                    alert("Error al subir portada");
+                }
+            }
+        });
+
+        // Initialize
+        loadProfile();
+    </script>
+</DashboardLayout>

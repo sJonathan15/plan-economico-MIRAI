@@ -1,0 +1,15 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { EntrepreneurshipWizard } from "../../components/EntrepreneurshipWizard";
+import BackButton from "../../components/BackButton.astro";
+---
+
+<DashboardLayout
+    title="Crear Emprendimiento"
+    subtitle="Registra la información general de tu proyecto paso a paso"
+>
+    <div class="h-[calc(100vh-64px)] bg-[#FAFAFA] p-4">
+        <BackButton href="/entrepreneurship" />
+        <EntrepreneurshipWizard client:load />
+    </div>
+</DashboardLayout>

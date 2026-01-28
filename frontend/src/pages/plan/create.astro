@@ -1,0 +1,15 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { PlanCreationContainer } from "../../components/PlanCreationContainer";
+import BackButton from "../../components/BackButton.astro";
+---
+
+<DashboardLayout
+    title="Plan Económico"
+    subtitle="Construye el análisis financiero de tu emprendimiento"
+>
+    <div class="h-[calc(100vh-64px)] bg-[#FAFAFA] p-4">
+        <BackButton href="/dashboard" />
+        <PlanCreationContainer client:only="react" />
+    </div>
+</DashboardLayout>

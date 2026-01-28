@@ -1,0 +1,18 @@
+{
+    "name": "economic-plan-platform",
+    "version": "1.0.0",
+    "description": "Full stack platform for economic plan generation",
+    "scripts": {
+        "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+        "db:setup": "cd backend && npx prisma migrate dev --name init && npx prisma generate",
+        "dev:backend": "cd backend && npm run dev",
+        "dev:frontend": "cd frontend && npm run dev",
+        "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    },
+    "dependencies": {
+        "@astrojs/vercel": "^9.0.4"
+    }
+}

@@ -1,0 +1,224 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import Navbar from "../components/Navbar.astro";
+import BackButton from "../components/BackButton.astro";
+import { InputField } from "../components/InputField";
+import StatusModal from "../components/StatusModal.astro";
+---
+
+<MainLayout title="Registro">
+    <Navbar />
+    <div
+        class="flex items-center justify-center min-h-[calc(100vh-80px)] pt-20 pb-12"
+    >
+        <div
+            class="w-full max-w-lg bg-white p-10 rounded-[24px] shadow-2xl relative overflow-hidden"
+        >
+            <BackButton />
+            <h2
+                class="text-3xl font-black text-slate-900 text-center mb-2 tracking-tight"
+            >
+                Crear Cuenta
+            </h2>
+            <p
+                class="text-center text-slate-500 font-medium mb-10 leading-relaxed"
+            >
+                Crea tu cuenta hoy y empieza a generar tus planes de negocios
+                facil y rapido.
+            </p>
+
+            <form id="register-form" class="space-y-5">
+                <InputField
+                    label="Nombre Completo"
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Juan Pérez"
+                />
+
+                <InputField
+                    label="Correo Electrónico"
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="correo@institucion.edu"
+                />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <InputField
+                        client:load
+                        label="Contraseña"
+                        type="password"
+                        id="password"
+                        name="password"
+                        required
+                        placeholder="Mínimo 6 caracteres"
+                        minLength={6}
+                    />
+
+                    <InputField
+                        client:load
+                        label="Confirmar Clave"
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        required
+                        placeholder="Repite tu clave"
+                    />
+                </div>
+
+                <InputField
+                    label="Tipo de Usuario"
+                    select
+                    id="role"
+                    name="role"
+                    options={[
+                        { value: "STUDENT", label: "Estudiante" },
+                        { value: "TEACHER", label: "Empresario" },
+                    ]}
+                />
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-full py-4 text-lg shadow-xl shadow-indigo-500/10 hover:-translate-y-1 transition-all active:scale-95"
+                >
+                    Registrarse
+                </button>
+            </form>
+
+            <div class="mt-8 pt-8 border-t border-slate-100 text-center">
+                <p class="text-sm text-slate-600 font-medium">
+                    ¿Ya tienes cuenta? <a
+                        href="/login"
+                        class="text-indigo-600 font-bold hover:text-indigo-700 transition-colors"
+                        >Inicia Sesión</a
+                    >
+                </p>
+            </div>
+        </div>
+    </div>
+    <StatusModal id="register-status-modal" />
+</MainLayout>
+
+<script>
+    import { api } from "../lib/api";
+
+    const form = document.getElementById("register-form") as HTMLFormElement;
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submitBtn = form.querySelector(
+            'button[type="submit"]',
+        ) as HTMLButtonElement;
+        const originalText = submitBtn.innerText;
+
+        const formData = new FormData(form);
+        const name = formData.get("name") as string;
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const confirmPassword = formData.get("confirmPassword") as string;
+        const role = formData.get("role") as string;
+
+        const modal = (window as any).AstroStatusModal["register-status-modal"];
+
+        // Client-side validation
+        if (!name.trim()) {
+            modal.show({
+                title: "Nombre Obligatorio",
+                message: "Por favor, ingresa tu nombre completo.",
+                type: "warning",
+            });
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.trim()) {
+            modal.show({
+                title: "Correo Obligatorio",
+                message:
+                    "El correo electrónico es necesario para crear tu cuenta.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (!emailRegex.test(email)) {
+            modal.show({
+                title: "Formato de Correo",
+                message: "El formato del correo electrónico no es válido.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (!password) {
+            modal.show({
+                title: "Contraseña Obligatoria",
+                message: "Debes definir una contraseña para tu cuenta.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (password.length < 6) {
+            modal.show({
+                title: "Contraseña Débil",
+                message:
+                    "La contraseña debe tener al menos 6 caracteres por seguridad.",
+                type: "warning",
+            });
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            modal.show({
+                title: "Contraseñas no coinciden",
+                message:
+                    "Asegúrate de que ambas contraseñas escritas sean iguales.",
+                type: "warning",
+            });
+            return;
+        }
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Creando cuenta...";
+
+            await api.register({ name, email, password, role });
+
+            modal.show({
+                title: "¡Registro Exitoso!",
+                message:
+                    "Bienvenido a MIRAI. Tu cuenta ha sido creada correctamente.",
+                type: "success",
+            });
+
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+        } catch (error: any) {
+            console.error("Registration error:", error);
+
+            let title = "Error de Registro";
+            let message =
+                "No se pudo completar el registro. Intenta nuevamente.";
+
+            if (error.error === "Email already registered") {
+                title = "Correo en Uso";
+                message =
+                    "Este correo electrónico ya está registrado. Intenta iniciar sesión o usa otro correo.";
+            }
+
+            modal.show({
+                title,
+                message,
+                type: "error",
+            });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
+    });
+</script>

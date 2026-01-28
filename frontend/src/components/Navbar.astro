@@ -1,0 +1,102 @@
+---
+
+---
+
+<nav
+    id="main-navbar"
+    class="fixed top-0 left-0 w-full z-[100] transition-all duration-300 border-b border-transparent"
+>
+    <div class="container-custom">
+        <div
+            class="flex items-center justify-between h-20 transition-all duration-300"
+            id="navbar-height"
+        >
+            <!-- Logo -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <img
+                    src="/images/Logo_MIRAI_color_sinf.png"
+                    alt="MIRAI Logo"
+                    class="h-10 w-auto transform group-hover:scale-105 transition-transform"
+                />
+                <span
+                    class="text-2xl font-black tracking-tighter text-slate-900"
+                    >MIRAI</span
+                >
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a
+                    href="/"
+                    class="text-sm font-bold text-slate-600 hover:text-indigo-600 nav-link"
+                    id="nav-home">Inicio</a
+                >
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="flex items-center space-x-4">
+                <div id="auth-buttons" class="flex items-center gap-3">
+                    <a
+                        href="/login"
+                        class="text-sm font-bold text-slate-600 hover:text-indigo-600 px-4 py-2 transition-all nav-link"
+                        id="nav-login">Iniciar Sesión</a
+                    >
+                    <a
+                        href="/register"
+                        class="btn btn-primary px-6 py-3 text-sm shadow-xl shadow-indigo-500/20 hover:-translate-y-0.5"
+                        >Registrarse</a
+                    >
+                </div>
+                <div id="user-menu" class="hidden">
+                    <button id="logout-btn" class="btn btn-secondary text-sm"
+                        >Cerrar Sesión</button
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    const navbar = document.getElementById("main-navbar");
+
+    window.addEventListener(
+        "scroll",
+        () => {
+            if (window.scrollY > 20) {
+                navbar?.classList.add("is-scrolled");
+            } else {
+                navbar?.classList.remove("is-scrolled");
+            }
+        },
+        { passive: true },
+    );
+
+    // Check if user is logged in
+    const token =
+        localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (token) {
+        document.getElementById("auth-buttons")?.classList.add("hidden");
+        document.getElementById("user-menu")?.classList.remove("hidden");
+    }
+
+    // Logout functionality
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            import("../lib/api").then((m) => {
+                m.api.logout();
+                window.location.href = "/";
+            });
+        });
+    }
+
+    // Active route detection
+    const currentPath = window.location.pathname;
+    if (currentPath === "/") {
+        document.getElementById("nav-home")?.classList.add("active");
+    } else if (currentPath === "/login") {
+        document.getElementById("nav-login")?.classList.add("active");
+    }
+</script>
