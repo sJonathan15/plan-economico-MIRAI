@@ -1,13 +1,23 @@
+# Node
 node_modules
+**/node_modules
+
+# Build
 dist
-.env
-uploads/*.docx
-debug.log
-*.log
-.DS_Store
-.vercel
-.env.*
-backend/node_modules
-frontend/node_modules
 backend/dist
 frontend/dist
+
+# Env
+.env
+.env.*
+
+# Logs
+debug.log
+*.log
+
+# OS
+.DS_Store
+
+# Others
+.vercel
+uploads/*.docx
