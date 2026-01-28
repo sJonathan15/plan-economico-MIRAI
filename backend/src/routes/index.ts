@@ -42,5 +42,8 @@ router.put('/plans/:id', authMiddleware, planController.updatePlan);
 router.delete('/plans/:id', authMiddleware, planController.deletePlan);
 router.delete('/documents/:id', authMiddleware, planController.deleteDocument);
 // router.post('/plans/:id/export', authMiddleware, planController.exportPlan); // MOVED to binaryRoutes.ts
+router.use((req, res) => {
+    res.status(404).json({ error: 'API route not found' });
+});
 
 export default router;

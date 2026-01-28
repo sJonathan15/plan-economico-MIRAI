@@ -1,0 +1,1 @@
+import"./Navbar.astro_astro_type_script_index_0_lang.etmQtTSB.js";import"./Sidebar.astro_astro_type_script_index_0_lang.DZqaJy4g.js";import"./api.CPfjwQVw.js";const o=(e,t)=>{e.forEach(r=>{r.isIntersecting&&(r.target.classList.add("active"),t.unobserve(r.target))})},s=new IntersectionObserver(o,{threshold:.1});document.querySelectorAll(".reveal").forEach(e=>{s.observe(e)});

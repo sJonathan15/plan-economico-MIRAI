@@ -66,11 +66,20 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     });
 });
 
-// 404 handler
-app.use((req, res) => {
-    console.warn(`[404] ${req.method} ${req.url}`);
-    res.status(404).json({ error: 'Route not found' });
+// ===============================
+// SERVE FRONTEND (PRODUCTION)
+// ===============================
+
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+
+// Serve static frontend files
+app.use(express.static(frontendDistPath));
+
+// Let frontend handle client-side routing
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
 });
+
 
 // Start server
 app.listen(PORT, () => {

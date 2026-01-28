@@ -1,0 +1,1 @@
+import"./Sidebar.astro_astro_type_script_index_0_lang.DZqaJy4g.js";import"./api.CPfjwQVw.js";const t=document.getElementById("back-button");t&&t.addEventListener("click",()=>{window.history.length>1?window.history.back():window.location.href="/"});

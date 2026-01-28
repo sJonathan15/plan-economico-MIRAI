@@ -7,3 +7,7 @@ debug.log
 .DS_Store
 .vercel
 .env.*
+backend/node_modules
+frontend/node_modules
+backend/dist
+frontend/dist
